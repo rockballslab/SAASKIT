@@ -13,7 +13,7 @@ Built on top of [vps-secure](https://github.com/rockballslab/vps-secure) - free,
 Because the tools you already pay for every month have a free, production-grade, open-source equivalent - and they're better.
 
 
-<p align="center">
+<p align="left">
   <img src="./saaskit.png" alt="The essential Kit for Starters and Builders" width="80%">
 </p>
 
