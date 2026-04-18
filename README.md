@@ -11,7 +11,7 @@
 
 
 > [!NOTE]
-> SAASKIT is the setup I wish I had when I started.
+> SAASKIT is the setup I wish I had when I started. *(Fabrice - SAAS Founder)*
 
 
 Built on top of [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — French Hardening Solution for your VPS
