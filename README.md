@@ -46,9 +46,9 @@ Two years ago, I knew nothing about servers, APIs, or self-hosting. I was paying
 | ⚙️ **SAASKIT** | The self-hosted SaaS stack — you're here |
 | 🤖 *More coming* | AI agents, autonomous workflows, voice stack |
 
+
 **Zero Trust philosophy.** Every tool in this ecosystem follows one principle: *nothing is trusted by default, nothing is exposed without a reason*. No port open unless necessary. No service with more access than it needs. Your data stays on your server, under your control — not on someone else's cloud.
 
-> *"Eat your own dog food"* — I run this exact stack on my production servers.
 
 ---
 
