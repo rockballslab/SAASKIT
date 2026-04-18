@@ -2,11 +2,18 @@
   <img src="./saaskit_logo.png" alt="SAASKIT" width="100%">
 </p>
 
-**One-script SaaS stack installer for self-hosted indie builders.**
+---
+
+
+**SAASKIT is a One-script SaaS stack installer for self-hosted indie builders.**
 
 > n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Claude Code · MCP
 
-Built on top of [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — free, open source, and yours forever.
+Built on top of [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — French Hardening Solution for your VPS
+
+
+---
+
 
 <p align="left">
   <img src="./saaskit.png" alt="The essential Kit for Starters and Builders" width="100%">
