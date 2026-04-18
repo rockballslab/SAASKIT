@@ -4,22 +4,22 @@
 
 > n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Claude Code
 
-Built on top of [vps-secure](https://github.com/rockballslab/vps-secure) — free, open source, and yours forever.
+Built on top of [vps-secure](https://github.com/rockballslab/vps-secure) - free, open source, and yours forever.
 
 ---
 
 ## Why self-host your SaaS stack?
 
-Because the tools you already pay for every month have a free, production-grade, open-source equivalent — and they're better.
+Because the tools you already pay for every month have a free, production-grade, open-source equivalent - and they're better.
 
 | You probably pay for... | Self-hosted with SAASKIT | Monthly savings |
 |---|---|---|
-| **Airtable** Pro ($20/user/mo) | **Baserow** — same no-code UX, unlimited rows, unlimited users | ~$60–200/mo |
-| **n8n Cloud** Starter ($20/mo, 5k executions) | **n8n** self-hosted — unlimited executions, unlimited workflows | ~$20–50/mo |
-| **AWS S3** (~$25/mo for 100GB + requests) | **MinIO** — S3-compatible, on your VPS, zero storage fees | ~$25/mo |
-| **AWS RDS** PostgreSQL (db.t3.micro: ~$15/mo) | **PostgreSQL 16** — shared between all services | ~$15/mo |
-| **Zapier** Pro ($49/mo) | Replaced by n8n self-hosted (see above) | — |
-| **Make** Core ($9/mo) | Replaced by n8n self-hosted | — |
+| **Airtable** Pro ($20/user/mo) | **Baserow** - same no-code UX, unlimited rows, unlimited users | ~$60–200/mo |
+| **n8n Cloud** Starter ($20/mo, 5k executions) | **n8n** self-hosted - unlimited executions, unlimited workflows | ~$20–50/mo |
+| **AWS S3** (~$25/mo for 100GB + requests) | **MinIO** - S3-compatible, on your VPS, zero storage fees | ~$25/mo |
+| **AWS RDS** PostgreSQL (db.t3.micro: ~$15/mo) | **PostgreSQL 16** - shared between all services | ~$15/mo |
+| **Zapier** Pro ($49/mo) | Replaced by n8n self-hosted (see above) | - |
+| **Make** Core ($9/mo) | Replaced by n8n self-hosted | - |
 
 > [!IMPORTANT]
 > **At current cloud pricing, this stack replaces $80 to $300/month of SaaS costs.** Your VPS costs $5–20/month. The math is obvious.
@@ -36,10 +36,10 @@ No Docker knowledge required. No manual config. One command.
 sudo ./saaskit.sh install
 ```
 
-You answer two questions (domain + email). Everything else is generated automatically — passwords, encryption keys, reverse proxy config, TLS certificates.
+You answer two questions (domain + email). Everything else is generated automatically - passwords, encryption keys, reverse proxy config, TLS certificates.
 
 > [!NOTE]
-> SAASKIT is designed to run **on top of vps-secure**. If your VPS is not hardened yet, start there first — it takes 15 minutes too. See [Prerequisites](#prerequisites).
+> SAASKIT is designed to run **on top of vps-secure**. If your VPS is not hardened yet, start there first - it takes 15 minutes too. See [Prerequisites](#prerequisites).
 
 ---
 
@@ -47,29 +47,29 @@ You answer two questions (domain + email). Everything else is generated automati
 
 | Service | What it does | Open-source alternative to |
 |---|---|---|
-| **[n8n](https://n8n.io)** | Visual workflow automation — APIs, webhooks, AI agents | Zapier, Make, n8n Cloud |
-| **[n8n-MCP](https://github.com/czlonkowski/n8n-mcp)** | MCP server — lets Claude control your n8n workflows | — |
+| **[n8n](https://n8n.io)** | Visual workflow automation - APIs, webhooks, AI agents | Zapier, Make, n8n Cloud |
+| **[n8n-MCP](https://github.com/czlonkowski/n8n-mcp)** | MCP server - lets Claude control your n8n workflows | - |
 | **[Baserow](https://baserow.io)** | No-code database with a spreadsheet-like UI | Airtable, Notion databases |
-| **[MinIO](https://min.io)** | S3-compatible object storage — files, backups, assets | AWS S3, Cloudflare R2 |
+| **[MinIO](https://min.io)** | S3-compatible object storage - files, backups, assets | AWS S3, Cloudflare R2 |
 | **[PostgreSQL 16](https://postgresql.org)** | Production-grade relational database, shared by all services | AWS RDS, Supabase |
 | **[Dragonfly](https://dragonflydb.io)** | Redis-compatible cache, 25× faster than Redis | Redis Cloud |
 | **[Redis 7](https://redis.io)** | Cache dedicated to Baserow | Redis Cloud |
 | **[Claude Code](https://claude.ai/code)** | AI coding CLI, pre-connected to your stack via MCP | GitHub Copilot, Cursor |
 
-**Bonus:** 100+ n8n workflow templates + the n8n-skills Claude Code skillset — cloned locally at install.
+**Bonus:** 100+ n8n workflow templates + the n8n-skills Claude Code skillset - cloned locally at install.
 
 ---
 
 ## Why n8n over Zapier or Make?
 
 > [!TIP]
-> **The killer feature of self-hosted n8n: unlimited executions.** Zapier Pro at $49/month gives you 2,000 tasks. n8n self-hosted gives you infinite — for the cost of your VPS.
+> **The killer feature of self-hosted n8n: unlimited executions.** Zapier Pro at $49/month gives you 2,000 tasks. n8n self-hosted gives you infinite - for the cost of your VPS.
 
 - **Zapier** charges per *task* (each action in a workflow). A workflow with 5 steps that runs 1,000 times = 5,000 tasks. That's $50/month on the Pro plan.
 - **Make** is cheaper but still caps by *operations* (each module execution).
 - **n8n self-hosted** runs on your server. 10 million executions? Same cost.
 
-n8n also has a built-in **AI Agent node** — you can wire Claude, GPT-4, or your local Ollama directly into your automations without a separate AI platform.
+n8n also has a built-in **AI Agent node** - you can wire Claude, GPT-4, or your local Ollama directly into your automations without a separate AI platform.
 
 ---
 
@@ -87,7 +87,7 @@ n8n also has a built-in **AI Agent node** — you can wire Claude, GPT-4, or you
 | Monthly cost | $0 | $20/user | **$0** |
 | Your data stays yours | ❌ | ❌ | **✅** |
 
-Baserow uses a standard PostgreSQL backend — your data is in a real database you own and can query directly.
+Baserow uses a standard PostgreSQL backend - your data is in a real database you own and can query directly.
 
 ---
 
@@ -101,7 +101,7 @@ AWS S3 looks cheap per GB ($0.023/GB/month) but the costs add up fast:
 MinIO on your VPS:
 - **Storage**: unlimited (bound by your VPS disk)
 - **Bandwidth**: included in your VPS plan
-- **API**: 100% S3-compatible — any tool that works with S3 works with MinIO, zero code changes
+- **API**: 100% S3-compatible - any tool that works with S3 works with MinIO, zero code changes
 
 > [!NOTE]
 > Your existing AWS S3 code works with MinIO without modification. Change the endpoint URL and credentials in your `.env`. That's it.
@@ -121,11 +121,11 @@ MinIO on your VPS:
 > **[vps-secure](https://github.com/rockballslab/vps-secure) handles all of this in 15 minutes.** It's the required foundation for SAASKIT.
 
 ```bash
-# Step 1 — harden your VPS (takes ~15 min)
-curl -fsSL https://raw.githubusercontent.com/rockballslab/vps-secure/main/install.sh -o install.sh
-chmod +x install.sh && sudo ./install.sh
+# Step 1 - harden your VPS (takes ~15 min)
+curl -fsSL https://raw.githubusercontent.com/rockballslab/vps-secure/main/install-secure.sh -o install-secure.sh
+chmod +x install-secure.sh && sudo ./install-secure.sh
 
-# Step 2 — install SAASKIT (takes ~5 min)
+# Step 2 - install SAASKIT (takes ~5 min)
 curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.sh -o saaskit.sh
 chmod +x saaskit.sh && sudo ./saaskit.sh install
 ```
@@ -163,7 +163,7 @@ listmonk.<yourdomain.com>      → YOUR_VPS_IP   # only if installing Listmonk
 ## Install
 
 ```bash
-# Download first — never pipe unknown scripts directly to bash
+# Download first - never pipe unknown scripts directly to bash
 curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.sh -o saaskit.sh
 chmod +x saaskit.sh
 sudo ./saaskit.sh install
@@ -177,22 +177,22 @@ The script is **fully interactive**. It asks two questions:
   Install Listmonk? (yes/no)     : 
 ```
 
-Everything else is generated automatically — database passwords, encryption keys, MCP authentication token. All credentials are saved to `/etc/vps-secure/SAASKIT.conf` (readable only by root).
+Everything else is generated automatically - database passwords, encryption keys, MCP authentication token. All credentials are saved to `/etc/vps-secure/SAASKIT.conf` (readable only by root).
 
 ---
 
-## What the script does — step by step
+## What the script does - step by step
 
 ```
-[1/9] Prerequisites    — detects Docker, reverse proxy mode (inject or standalone)
-[2/9] Configuration    — prompts for domain + email, generates all secrets
-[3/9] DNS check        — verifies all subdomains resolve to this VPS
-[4/9] Environment      — creates /opt/SAASKIT/, .env (chmod 600), init SQL
-[5/9] docker-compose   — generates compose file with pinned image versions
-[6/9] Reverse proxy    — injects Caddy blocks (or creates standalone Caddyfile)
-[7/9] Containers       — pulls images, starts services in dependency order
-[8/9] n8n templates    — clones 100+ workflow templates + n8n-skills locally
-[9/9] Claude Code CLI  — installs Node.js + @anthropic-ai/claude-code globally
+[1/9] Prerequisites    - detects Docker, reverse proxy mode (inject or standalone)
+[2/9] Configuration    - prompts for domain + email, generates all secrets
+[3/9] DNS check        - verifies all subdomains resolve to this VPS
+[4/9] Environment      - creates /opt/SAASKIT/, .env (chmod 600), init SQL
+[5/9] docker-compose   - generates compose file with pinned image versions
+[6/9] Reverse proxy    - injects Caddy blocks (or creates standalone Caddyfile)
+[7/9] Containers       - pulls images, starts services in dependency order
+[8/9] n8n templates    - clones 100+ workflow templates + n8n-skills locally
+[9/9] Claude Code CLI  - installs Node.js + @anthropic-ai/claude-code globally
 ```
 
 > [!NOTE]
@@ -205,7 +205,7 @@ Everything else is generated automatically — database passwords, encryption ke
 
 ## Post-install (required steps)
 
-### Step 1 — Configure n8n-MCP (required to use Claude with n8n)
+### Step 1 - Configure n8n-MCP (required to use Claude with n8n)
 
 ```bash
 # In the n8n UI: Settings → API → Create API Key
@@ -213,11 +213,11 @@ Everything else is generated automatically — database passwords, encryption ke
 sudo saaskit-mcp-apikey.sh <your-n8n-api-key>
 ```
 
-### Step 2 — Create your Baserow admin account
+### Step 2 - Create your Baserow admin account
 
 Baserow does not auto-create accounts on first run. Open `https://baserow.<domain>` and register with your admin email.
 
-### Step 3 — Verify all services
+### Step 3 - Verify all services
 
 ```bash
 sudo ./saaskit.sh keys    # displays all URLs and credentials
@@ -252,7 +252,7 @@ Once n8n-MCP is configured, add this to your `claude_desktop_config.json`:
 Your MCP token is in `/etc/vps-secure/SAASKIT.conf` → `MCP_TOKEN`.
 
 > [!NOTE]
-> With this setup, you can tell Claude: *"Create an n8n workflow that sends a Slack message when a new row is added to Baserow."* — Claude writes and deploys it directly via MCP. No copy-pasting, no JSON editing.
+> With this setup, you can tell Claude: *"Create an n8n workflow that sends a Slack message when a new row is added to Baserow."* - Claude writes and deploys it directly via MCP. No copy-pasting, no JSON editing.
 
 ---
 
@@ -279,7 +279,7 @@ Your MCP token is in `/etc/vps-secure/SAASKIT.conf` → `MCP_TOKEN`.
                     saaskit-postgres  dragonfly    redis       (listmonk)
 ```
 
-All SAASKIT containers communicate on `saaskit-net`. Only n8n, Baserow, MinIO API, MinIO Console, and n8n-MCP are reachable from outside — only on `127.0.0.1`, proxied through Caddy with automatic HTTPS.
+All SAASKIT containers communicate on `saaskit-net`. Only n8n, Baserow, MinIO API, MinIO Console, and n8n-MCP are reachable from outside - only on `127.0.0.1`, proxied through Caddy with automatic HTTPS.
 
 ---
 
@@ -316,8 +316,8 @@ docker compose down && docker compose --env-file .env up -d  # full restart
 
 `saaskit.sh backup` does two things:
 
-1. **PostgreSQL dump** — all databases (`n8n_db`, `baserow_db`, + `listmonk_db` if installed), compressed with gzip
-2. **Volume backup** — n8n workflows + credentials, MinIO data
+1. **PostgreSQL dump** - all databases (`n8n_db`, `baserow_db`, + `listmonk_db` if installed), compressed with gzip
+2. **Volume backup** - n8n workflows + credentials, MinIO data
 
 Backups are stored in `/opt/SAASKIT/backups/` and automatically uploaded to your MinIO internal bucket.
 
@@ -388,22 +388,22 @@ The skill auto-triggers when Claude Code is working in this project and provides
 
 ## Built with
 
-- [vps-secure](https://github.com/rockballslab/vps-secure) — VPS hardening baseline (required)
-- [n8n](https://n8n.io) — workflow automation platform
-- [n8n-mcp](https://github.com/czlonkowski/n8n-mcp) — MCP server for n8n by @czlonkowski
-- [Baserow](https://baserow.io) — open-source no-code database
-- [MinIO](https://min.io) — S3-compatible object storage
-- [PostgreSQL](https://postgresql.org) — relational database
-- [DragonflyDB](https://dragonflydb.io) — Redis-compatible in-memory store
-- [Caddy](https://caddyserver.com) — automatic HTTPS reverse proxy
-- [awesome-n8n-templates](https://github.com/enescingoz/awesome-n8n-templates) — community workflow templates
-- [n8n-skills](https://github.com/czlonkowski/n8n-skills) — Claude Code skillset for n8n
+- [vps-secure](https://github.com/rockballslab/vps-secure) - VPS hardening baseline (required)
+- [n8n](https://n8n.io) - workflow automation platform
+- [n8n-mcp](https://github.com/czlonkowski/n8n-mcp) - MCP server for n8n by @czlonkowski
+- [Baserow](https://baserow.io) - open-source no-code database
+- [MinIO](https://min.io) - S3-compatible object storage
+- [PostgreSQL](https://postgresql.org) - relational database
+- [DragonflyDB](https://dragonflydb.io) - Redis-compatible in-memory store
+- [Caddy](https://caddyserver.com) - automatic HTTPS reverse proxy
+- [awesome-n8n-templates](https://github.com/enescingoz/awesome-n8n-templates) - community workflow templates
+- [n8n-skills](https://github.com/czlonkowski/n8n-skills) - Claude Code skillset for n8n
 
 ---
 
 ## License
 
-MIT — use it, fork it, build on it.
+MIT - use it, fork it, build on it.
 
 ---
 
