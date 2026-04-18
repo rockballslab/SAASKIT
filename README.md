@@ -16,9 +16,6 @@
 > *(Fabrice - SAAS Founder)*
 
 
-Built on top of [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — French Hardening Solution for your VPS
-
-
 ---
 
 <p align="left">
