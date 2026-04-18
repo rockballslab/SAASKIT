@@ -46,7 +46,9 @@ Instead of spending days reading Docker tutorials, chasing config files, and gue
 # Step 1 — harden your VPS first (15 min)
 curl -fsSL https://raw.githubusercontent.com/rockballslab/VPS-SECURE/main/install-secure.sh -o install-secure.sh
 chmod +x install-secure.sh && sudo ./install-secure.sh
+```
 
+```bash
 # Step 2 — install SAASKIT (5 min)
 curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.sh -o saaskit.sh
 chmod +x saaskit.sh && sudo ./saaskit.sh install
