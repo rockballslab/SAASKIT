@@ -12,38 +12,20 @@ Built on top of [vps-secure](https://github.com/rockballslab/vps-secure) — fre
 
 ---
 
-## Why self-host your SaaS stack?
-
-Because the tools you already pay for every month have a free, production-grade, open-source equivalent — and they're better.
-
-| You probably pay for... | Self-hosted with SAASKIT | Monthly savings |
-|---|---|---|
-| **Airtable** Pro ($20/user/mo) | **Baserow** — same no-code UX, unlimited rows, unlimited users | ~$60–200/mo |
-| **n8n Cloud** ($20/mo, 5k executions) | **n8n** self-hosted — unlimited executions, unlimited workflows | ~$20–50/mo |
-| **AWS S3** (~$25/mo for 100GB + requests) | **MinIO** — S3-compatible, on your VPS, zero storage fees | ~$25/mo |
-| **AWS RDS** PostgreSQL (db.t3.micro: ~$15/mo) | **PostgreSQL 16** — shared between all services | ~$15/mo |
-| **Zapier** Pro ($49/mo) | Replaced by n8n self-hosted | ~$49/mo |
-| **Make** Core ($9/mo) | Replaced by n8n self-hosted | ~$9/mo |
-
-> [!IMPORTANT]
-> **At current cloud pricing, this stack replaces $80 to $300/month of SaaS costs.** Your VPS costs $5–20/month. The math is obvious.
-
----
-
-## What is SAASKIT?
-
-A single bash script that installs, wires, and secures a complete self-hosted SaaS infrastructure on your VPS — in under 15 minutes.
-
-**No Docker knowledge required. No manual config. One command.**
+## Quick start
 
 ```bash
-sudo ./saaskit.sh install
+# Step 1 — harden your VPS first (15 min)
+curl -fsSL https://raw.githubusercontent.com/rockballslab/vps-secure/main/install-secure.sh -o install-secure.sh
+chmod +x install-secure.sh && sudo ./install-secure.sh
+
+# Step 2 — install SAASKIT (5 min)
+curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.sh -o saaskit.sh
+chmod +x saaskit.sh && sudo ./saaskit.sh install
 ```
 
-The script asks a few questions (your domain, email, optional services). Everything else is generated automatically — passwords, encryption keys, reverse proxy config, TLS certificates.
-
-> [!NOTE]
-> SAASKIT is designed to run **on top of vps-secure**. If your VPS is not hardened yet, start there first — it takes 15 minutes too. See [Prerequisites](#prerequisites).
+> [!IMPORTANT]
+> **vps-secure is required before SAASKIT.** It hardens your server (firewall, SSH, Docker isolation) in 15 minutes. Do not skip this step.
 
 ---
 
@@ -61,6 +43,92 @@ The script asks a few questions (your domain, email, optional services). Everyth
 | **[Claude Code](https://claude.ai/code)** | AI coding CLI, pre-connected to your stack via MCP | GitHub Copilot, Cursor |
 
 **Bonus:** 100+ n8n workflow templates + the n8n-skills Claude Code skillset — cloned locally at install.
+
+---
+
+## Prerequisites
+
+> [!TIP]
+> **Complete beginner?** Don't worry — both vps-secure and SAASKIT are designed for exactly that. Follow the two steps below in order. Total time: ~30 minutes. You won't need to understand Docker, Nginx, or SSL certificates.
+
+### Server requirements
+
+| Requirement | Minimum | Recommended |
+|---|---|---|
+| OS | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
+| RAM | 8 GB | **16 GB** |
+| Disk | 20 GB | 50 GB+ |
+| CPU | 2 vCPU | 4 vCPU |
+
+> [!NOTE]
+> Tested on Hostinger KVM2 (16GB RAM, 8 vCPU, 200GB NVMe). Total install time: ~8 minutes.
+
+### DNS records (required before install)
+
+Point all subdomains to your VPS IP **before** running the script. The installer checks DNS and warns you if records are missing.
+
+```
+n8n.<yourdomain.com>            → YOUR_VPS_IP
+mcpn8n.<yourdomain.com>         → YOUR_VPS_IP
+baserow.<yourdomain.com>        → YOUR_VPS_IP
+minio.<yourdomain.com>          → YOUR_VPS_IP
+minio-console.<yourdomain.com>  → YOUR_VPS_IP
+listmonk.<yourdomain.com>       → YOUR_VPS_IP   # only if installing Listmonk
+```
+
+> [!TIP]
+> DNS propagation takes 0–48 hours depending on your registrar. Most modern registrars (Cloudflare, Namecheap) propagate within 1–5 minutes.
+
+---
+
+## Install
+
+The script is **fully interactive** and guides you at every step:
+
+```
+  Domain root (ex: mydomain.com) :
+  Admin email                    :
+  Install Listmonk? (yes/no)     :
+```
+
+Everything else is generated automatically — database passwords, encryption keys, MCP authentication token. All credentials are saved to `/etc/vps-secure/SAASKIT.conf` (readable only by root).
+
+### What the script does — step by step
+
+```
+[1/9] Prerequisites    — detects Docker, reverse proxy mode (inject or standalone)
+[2/9] Configuration    — prompts for domain + email, generates all secrets
+[3/9] DNS check        — verifies all subdomains resolve to this VPS
+[4/9] Environment      — creates /opt/SAASKIT/, .env (chmod 600), init SQL
+[5/9] docker-compose   — generates compose file with pinned image versions
+[6/9] Reverse proxy    — injects Caddy blocks (or creates standalone Caddyfile)
+[7/9] Containers       — pulls images, starts services in dependency order
+[8/9] n8n templates    — clones 100+ workflow templates + n8n-skills locally
+[9/9] Claude Code CLI  — installs Node.js + @anthropic-ai/claude-code globally
+```
+
+> [!NOTE]
+> **Reverse proxy detection is automatic.** If vps-secure is installed, SAASKIT injects its routes into the existing Caddy instance — no port conflict. If no proxy is found, a standalone Caddy is created. You don't need to configure anything.
+
+> [!WARNING]
+> If a previous installation is detected (`.env` exists), the script stops and asks you to run `update` or `uninstall` first. **It will not silently overwrite an existing installation.**
+
+---
+
+## Post-install (required steps)
+
+### Step 1 — Create your Baserow admin account
+
+Baserow does not auto-create accounts on first run. Open `https://baserow.<domain>` and register with your admin email.
+
+### Step 2 — Verify all services
+
+```bash
+sudo ./saaskit.sh keys    # displays all URLs and credentials
+```
+
+> [!TIP]
+> Bookmark `https://n8n.<domain>`, `https://baserow.<domain>`, and `https://minio-console.<domain>` immediately after install. Your credentials are in `/etc/vps-secure/SAASKIT.conf`.
 
 ---
 
@@ -130,14 +198,10 @@ Claude Code is installed by SAASKIT and pre-configured to talk to your stack. Fr
 claude   # opens Claude Code CLI
 ```
 
-Claude Code auto-loads the skill at `/opt/SAASKIT/templates/n8n-skills/SKILL.md`, which gives it:
-
-- Your n8n, Baserow, and MinIO connection strings
-- PostgreSQL direct access patterns
-- n8n workflow best practices for your stack
+Claude Code auto-loads the skill at `/opt/SAASKIT/templates/n8n-skills/SKILL.md`, which gives it your connection strings, PostgreSQL access patterns, and n8n best practices.
 
 > [!TIP]
-> Claude Code + n8n-MCP on the same machine = your most powerful setup. You can ask Claude to write a workflow, deploy it via MCP, then verify the result in Baserow — all in one conversation.
+> Claude Code + n8n-MCP on the same machine = your most powerful setup. Ask Claude to write a workflow, deploy it via MCP, then verify the result in Baserow — all in one conversation.
 
 ### Compatible MCP clients
 
@@ -153,7 +217,23 @@ n8n-MCP uses the standard HTTP+SSE transport. Any MCP-compatible client works:
 
 ---
 
-## Why n8n over Zapier or Make?
+## Why self-host your SaaS stack?
+
+Because the tools you already pay for every month have a free, production-grade, open-source equivalent — and they're better.
+
+| You probably pay for... | Self-hosted with SAASKIT | Monthly savings |
+|---|---|---|
+| **Airtable** Pro ($20/user/mo) | **Baserow** — same no-code UX, unlimited rows, unlimited users | ~$60–200/mo |
+| **n8n Cloud** ($20/mo, 5k executions) | **n8n** self-hosted — unlimited executions, unlimited workflows | ~$20–50/mo |
+| **AWS S3** (~$25/mo for 100GB + requests) | **MinIO** — S3-compatible, on your VPS, zero storage fees | ~$25/mo |
+| **AWS RDS** PostgreSQL (db.t3.micro: ~$15/mo) | **PostgreSQL 16** — shared between all services | ~$15/mo |
+| **Zapier** Pro ($49/mo) | Replaced by n8n self-hosted | ~$49/mo |
+| **Make** Core ($9/mo) | Replaced by n8n self-hosted | ~$9/mo |
+
+> [!IMPORTANT]
+> **At current cloud pricing, this stack replaces $80 to $300/month of SaaS costs.** Your VPS costs $5–20/month. The math is obvious.
+
+### Why n8n over Zapier or Make?
 
 > [!TIP]
 > **The killer feature of self-hosted n8n: unlimited executions.** Zapier Pro at $49/month gives you 2,000 tasks. n8n self-hosted gives you infinite — for the cost of your VPS.
@@ -164,9 +244,7 @@ n8n-MCP uses the standard HTTP+SSE transport. Any MCP-compatible client works:
 
 n8n also has a built-in **AI Agent node** — you can wire Claude, GPT-4, or your local Ollama directly into your automations without a separate AI platform.
 
----
-
-## Why Baserow over Airtable?
+### Why Baserow over Airtable?
 
 > [!TIP]
 > **Airtable's free tier limits you to 1,200 rows per base.** A serious project hits that in a week. Baserow self-hosted has no row limit, no user limit, no base limit.
@@ -182,138 +260,14 @@ n8n also has a built-in **AI Agent node** — you can wire Claude, GPT-4, or you
 
 Baserow uses a standard PostgreSQL backend — your data is in a real database you own and can query directly.
 
----
+### Why MinIO over AWS S3?
 
-## Why MinIO over AWS S3?
+AWS S3 looks cheap per GB ($0.023/GB/month) but the costs add up fast: data transfer OUT at $0.09/GB, PUT/GET requests billed per 1,000 operations — a media-heavy app can easily hit $50–100/month.
 
-AWS S3 looks cheap per GB ($0.023/GB/month) but the costs add up fast:
-- Data transfer OUT: $0.09/GB
-- PUT/GET requests: billed per 1,000 operations
-- A media-heavy app can easily hit $50–100/month
-
-MinIO on your VPS:
-- **Storage**: unlimited (bound by your VPS disk)
-- **Bandwidth**: included in your VPS plan
-- **API**: 100% S3-compatible — any tool that works with S3 works with MinIO, zero code changes
+MinIO on your VPS: unlimited storage (bound by your disk), bandwidth included in your VPS plan, 100% S3-compatible API.
 
 > [!NOTE]
 > Your existing AWS S3 code works with MinIO without modification. Change the endpoint URL and credentials in your `.env`. That's it.
-
----
-
-## Prerequisites
-
-> [!TIP]
-> **Complete beginner?** Don't worry — both vps-secure and SAASKIT are designed for exactly that. Follow the two steps below in order. Total time: ~30 minutes. You won't need to understand Docker, Nginx, or SSL certificates.
-
-### Step 1 — Harden your VPS with vps-secure
-
-> [!IMPORTANT]
-> **Do not expose this stack on a raw, unhardened VPS.** n8n, Baserow, and MinIO have web interfaces accessible from the internet. Before installing SAASKIT, your VPS needs:
-> - A firewall (UFW configured)
-> - SSH hardening (key-based auth, non-standard port)
-> - Fail-safe Docker isolation
->
-> **[vps-secure](https://github.com/rockballslab/vps-secure) handles all of this in 15 minutes.** It's the required foundation for SAASKIT.
-
-```bash
-# Step 1 — harden your VPS (takes ~15 min)
-curl -fsSL https://raw.githubusercontent.com/rockballslab/vps-secure/main/install-secure.sh -o install-secure.sh
-chmod +x install-secure.sh && sudo ./install-secure.sh
-```
-
-### Step 2 — Install SAASKIT
-
-```bash
-# Step 2 — install SAASKIT (takes ~5 min)
-curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.sh -o saaskit.sh
-chmod +x saaskit.sh && sudo ./saaskit.sh install
-```
-
-### Server requirements
-
-| Requirement | Minimum | Recommended |
-|---|---|---|
-| OS | Ubuntu 24.04 LTS | Ubuntu 24.04 LTS |
-| RAM | 8 GB | **16 GB** |
-| Disk | 20 GB | 50 GB+ |
-| CPU | 2 vCPU | 4 vCPU |
-
-> [!NOTE]
-> Tested on Hostinger KVM2 (16GB RAM, 8 vCPU, 200GB NVMe). Total install time: ~8 minutes.
-
-### DNS records (required before install)
-
-Point all subdomains to your VPS IP **before** running the script. The installer checks DNS and warns you if records are missing.
-
-```
-n8n.<yourdomain.com>            → YOUR_VPS_IP
-mcpn8n.<yourdomain.com>         → YOUR_VPS_IP
-baserow.<yourdomain.com>        → YOUR_VPS_IP
-minio.<yourdomain.com>          → YOUR_VPS_IP
-minio-console.<yourdomain.com>  → YOUR_VPS_IP
-listmonk.<yourdomain.com>       → YOUR_VPS_IP   # only if installing Listmonk
-```
-
-> [!TIP]
-> DNS propagation takes 0–48 hours depending on your registrar. Most modern registrars (Cloudflare, Namecheap) propagate within 1–5 minutes.
-
----
-
-## Install
-
-The script is **fully interactive** and guides you at every step:
-
-```
-  Domain root (ex: mydomain.com) :
-  Admin email                    :
-  Install Listmonk? (yes/no)     :
-```
-
-Everything else is generated automatically — database passwords, encryption keys, MCP authentication token. All credentials are saved to `/etc/vps-secure/SAASKIT.conf` (readable only by root).
-
----
-
-## What the script does — step by step
-
-```
-[1/9] Prerequisites    — detects Docker, reverse proxy mode (inject or standalone)
-[2/9] Configuration    — prompts for domain + email, generates all secrets
-[3/9] DNS check        — verifies all subdomains resolve to this VPS
-[4/9] Environment      — creates /opt/SAASKIT/, .env (chmod 600), init SQL
-[5/9] docker-compose   — generates compose file with pinned image versions
-[6/9] Reverse proxy    — injects Caddy blocks (or creates standalone Caddyfile)
-[7/9] Containers       — pulls images, starts services in dependency order
-[8/9] n8n templates    — clones 100+ workflow templates + n8n-skills locally
-[9/9] Claude Code CLI  — installs Node.js + @anthropic-ai/claude-code globally
-```
-
-> [!NOTE]
-> **Reverse proxy detection is automatic.** If vps-secure is installed, SAASKIT injects its routes into the existing Caddy instance (no port 80/443 conflict). If no proxy is found, a standalone Caddy is created inside the stack. You don't need to configure anything.
-
-> [!WARNING]
-> If a previous installation is detected (`.env` exists), the script stops and asks you to run `update` or `uninstall` first. **It will not silently overwrite an existing installation.**
-
----
-
-## Post-install (required steps)
-
-### Step 1 — Wire Claude to your n8n via MCP
-
-See the [MCP section above](#mcp--let-claude-control-your-stack) for the full setup guide.
-
-### Step 2 — Create your Baserow admin account
-
-Baserow does not auto-create accounts on first run. Open `https://baserow.<domain>` and register with your admin email.
-
-### Step 3 — Verify all services
-
-```bash
-sudo ./saaskit.sh keys    # displays all URLs and credentials
-```
-
-> [!TIP]
-> Bookmark `https://n8n.<domain>`, `https://baserow.<domain>`, and `https://minio-console.<domain>` immediately after install. Your credentials are in `/etc/vps-secure/SAASKIT.conf`.
 
 ---
 
