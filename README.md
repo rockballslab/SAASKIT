@@ -50,8 +50,8 @@ curl -fsSL https://raw.githubusercontent.com/rockballslab/SAASKIT/main/saaskit.s
 chmod +x saaskit.sh && sudo ./saaskit.sh install
 ```
 
-> [!IMPORTANT]
-> **VPS-SECURE is required before SAASKIT.** It hardens your server (firewall, SSH, Docker isolation) in 15 minutes. Do not skip this step.
+> [!TIP]
+> We strongly recommend installing vps-secure first. It hardens your server (firewall, SSH, Docker isolation) in 15 minutes — and makes everything below production-safe. SAASKIT works without it, but you'd be running exposed services on an unhardened VPS.
 
 ---
 
@@ -75,7 +75,7 @@ chmod +x saaskit.sh && sudo ./saaskit.sh install
 ## Prerequisites
 
 > [!TIP]
-> **Complete beginner?** Don't worry — both VPS-SECURE and SAASKIT are designed for exactly that. Follow the two steps below in order. Total time: ~30 minutes. You won't need to understand Docker, Nginx, or SSL certificates.
+> **Running on a fresh VPS?** We recommend installing [vps-secure](https://github.com/rockballslab/vps-secure) first. It sets up your firewall, SSH hardening, and Docker isolation in 15 minutes — and makes SAASKIT significantly more secure. Skip it if you already have a hardened server.
 
 ### Server requirements
 
@@ -432,7 +432,7 @@ The skill auto-triggers when Claude Code is working in this project and provides
 
 ## Built with
 
-- [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — VPS hardening baseline (required)
+- [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — VPS hardening baseline (strongly recommended)
 - [n8n](https://n8n.io) — workflow automation platform
 - [n8n-mcp](https://github.com/czlonkowski/n8n-mcp) — MCP server for n8n by @czlonkowski
 - [Baserow](https://baserow.io) — open-source no-code database
