@@ -9,11 +9,15 @@
 
 > n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Claude Code · MCP
 
+
+> [!NOTE]
+> SAASKIT is the setup I wish I had when I started.
+
+
 Built on top of [VPS-SECURE](https://github.com/rockballslab/VPS-SECURE) — French Hardening Solution for your VPS
 
 
 ---
-
 
 <p align="left">
   <img src="./saaskit.png" alt="The essential Kit for Starters and Builders" width="100%">
