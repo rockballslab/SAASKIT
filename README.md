@@ -1,4 +1,6 @@
-# SAASKIT
+<p align="left">
+  <img src="./saaskit.png" alt="The essential Kit for Starters and Builders" width="100%">
+</p>
 
 **One-script SaaS stack installer for self-hosted indie builders.**
 
