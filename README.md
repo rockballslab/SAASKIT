@@ -2,7 +2,7 @@
 
 **One-script SaaS stack installer for self-hosted indie builders.**
 
-> n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Claude Code
+> n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Claude Code · MCP
 
 Built on top of [vps-secure](https://github.com/rockballslab/vps-secure) — free, open source, and yours forever.
 
