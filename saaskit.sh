@@ -73,6 +73,7 @@ PORT_LISTMONK=5682
 PORT_LOGTO=3001
 PORT_LOGTO_ADMIN=3002
 PORT_TTS=5683
+PORT_UPTIME=5684
 
 # ============================================================
 # Vérification root
@@ -239,16 +240,17 @@ _install_gather_config() {
     LOGTO_DOMAIN="auth.${ROOT_DOMAIN}"
     LOGTO_ADMIN_DOMAIN="auth-admin.${ROOT_DOMAIN}"
     TTS_DOMAIN="tts.${ROOT_DOMAIN}"
+    UPTIME_DOMAIN="status.${ROOT_DOMAIN}"
 
     echo ""
     log_info "Sous-domaines qui seront configurés :"
     for d in "$N8N_DOMAIN" "$MCP_DOMAIN" "$BASEROW_DOMAIN" "$MINIO_DOMAIN" \
-              "$MINIO_CONSOLE_DOMAIN" "$LISTMONK_DOMAIN" "$LOGTO_DOMAIN"; do
+              "$MINIO_CONSOLE_DOMAIN" "$LISTMONK_DOMAIN" "$LOGTO_DOMAIN" "$UPTIME_DOMAIN"; do
         echo -e "  ${BLANC}$d${RESET}"
     done
     [[ "$INSTALL_TTS" == "oui" ]] && echo -e "  ${BLANC}$TTS_DOMAIN${RESET}"
     echo ""
-    log_warn "Listmonk (email) et Logto (auth OIDC) sont installés automatiquement."
+    log_warn "Listmonk (email), Logto (auth OIDC) et Uptime Kuma (monitoring) sont installés automatiquement."
     log_warn "Pocket TTS : $([ "$INSTALL_TTS" == "oui" ] && echo "OUI" || echo "non")"
     log_success "Secrets générés."
 
@@ -265,7 +267,7 @@ _install_check_dns() {
     log_info "IP VPS détectée : $VPS_IP"
 
     local DOMAINS_TO_CHECK=("$N8N_DOMAIN" "$MCP_DOMAIN" "$BASEROW_DOMAIN" "$MINIO_DOMAIN" \
-                             "$MINIO_CONSOLE_DOMAIN" "$LISTMONK_DOMAIN" "$LOGTO_DOMAIN")
+                             "$MINIO_CONSOLE_DOMAIN" "$LISTMONK_DOMAIN" "$LOGTO_DOMAIN" "$UPTIME_DOMAIN")
     [[ "$INSTALL_TTS" == "oui" ]] && DOMAINS_TO_CHECK+=("$TTS_DOMAIN")
 
     local DNS_OK=true
@@ -298,6 +300,7 @@ _install_create_env() {
     mkdir -p "$DATA_DIR/postgres" "$DATA_DIR/dragonfly" "$DATA_DIR/redis" \
              "$DATA_DIR/n8n" "$DATA_DIR/baserow" "$DATA_DIR/minio" \
              "$DATA_DIR/listmonk" "$DATA_DIR/logto" "$DATA_DIR/tts" \
+             "$DATA_DIR/uptime-kuma" \
              "$KIT_DIR/templates" "$KIT_DIR/initdb"
 
     if [[ -d "$DATA_DIR/postgres/global" ]]; then
@@ -349,6 +352,8 @@ INSTALL_TTS=${INSTALL_TTS}
 HF_TOKEN=${HF_TOKEN}
 TTS_DOMAIN=${TTS_DOMAIN}
 PORT_TTS=${PORT_TTS}
+UPTIME_DOMAIN=${UPTIME_DOMAIN}
+PORT_UPTIME=${PORT_UPTIME}
 KIT_DIR=${KIT_DIR}
 DATA_DIR=${DATA_DIR}
 ENV
@@ -421,6 +426,8 @@ _install_generate_compose() {
       DB_URL: postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:5432/logto_db
       ENDPOINT: https://\${LOGTO_DOMAIN}
       ADMIN_ENDPOINT: http://127.0.0.1:${PORT_LOGTO_ADMIN}
+    volumes:
+      - ${DATA_DIR}/logto:/etc/logto/packages/core/connectors
     networks:
       - saaskit-net
     depends_on:
@@ -442,7 +449,7 @@ _install_generate_compose() {
     if [[ "$INSTALL_TTS" == "oui" ]]; then
         TTS_SERVICE="
   tts:
-    image: kyutai/pocket-tts:latest
+    image: ghcr.io/kyutai-labs/pocket-tts:latest
     container_name: saaskit-tts
     restart: unless-stopped
     ports:
@@ -467,6 +474,29 @@ _install_generate_compose() {
     logging:
       options: {max-size: \"10m\", max-file: \"3\"}"
     fi
+
+    # Uptime Kuma — toujours installé
+    local UPTIME_SERVICE="
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    container_name: saaskit-uptime-kuma
+    restart: unless-stopped
+    ports:
+      - \"127.0.0.1:${PORT_UPTIME}:3001\"
+    volumes:
+      - ${DATA_DIR}/uptime-kuma:/app/data
+    networks:
+      - saaskit-net
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: [\"CMD-SHELL\", \"wget --quiet --tries=1 --spider http://localhost:3001/ || exit 1\"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      options: {max-size: \"10m\", max-file: \"3\"}"
 
     # ARCH1 : bloc Caddy conditionnel (standalone uniquement)
     local CADDY_SVC_BLOCK=""
@@ -722,6 +752,8 @@ ${LOGTO_SERVICE}
 
 ${TTS_SERVICE}
 
+${UPTIME_SERVICE}
+
 networks:
   saaskit-net:
     name: saaskit-net
@@ -848,6 +880,16 @@ ${LOGTO_DOMAIN} {
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
 
+# ── saas-kit — Uptime Kuma (status) ──────────────────────────────────────────
+${UPTIME_DOMAIN} {
+  reverse_proxy 127.0.0.1:${PORT_UPTIME} {
+    header_up Host \{host}
+    header_up X-Real-IP \{remote_host}
+    header_up X-Forwarded-Proto \{scheme}
+  }
+  header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
+}
+
 ${TTS_CADDY_BLOCK}
 CADDYBLOCKS
             log_success "Blocs saas-kit injectés dans $CADDYFILE"
@@ -917,6 +959,12 @@ ${LISTMONK_DOMAIN} {
 # ── saas-kit — Logto (auth OIDC) ─────────────────────────────────────────────
 ${LOGTO_DOMAIN} {
   reverse_proxy saaskit-logto:3001
+  header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
+}
+
+# ── saas-kit — Uptime Kuma (status) ──────────────────────────────────────────
+${UPTIME_DOMAIN} {
+  reverse_proxy saaskit-uptime-kuma:3001
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
 CADDYSTANDALONE
@@ -989,7 +1037,8 @@ _install_start_containers() {
 
     local FAILED=false
     local SERVICES=(saaskit-postgres saaskit-dragonfly saaskit-redis saaskit-n8n \
-                    saaskit-baserow saaskit-minio saaskit-listmonk saaskit-logto)
+                    saaskit-baserow saaskit-minio saaskit-listmonk saaskit-logto \
+                    saaskit-uptime-kuma)
     [[ "$INSTALL_TTS" == "oui" ]] && SERVICES+=(saaskit-tts)
     [[ "$CADDY_MODE" == "standalone" ]] && SERVICES+=(saaskit-caddy)
 
@@ -1078,6 +1127,8 @@ PORT_LOGTO="${PORT_LOGTO}"
 PORT_LOGTO_ADMIN="${PORT_LOGTO_ADMIN}"
 INSTALL_TTS="${INSTALL_TTS}"
 TTS_DOMAIN="${TTS_DOMAIN}"
+UPTIME_DOMAIN="${UPTIME_DOMAIN}"
+PORT_UPTIME="${PORT_UPTIME}"
 # ARCH1 : mode reverse proxy détecté à l'installation
 CADDY_MODE="${CADDY_MODE}"
 CADDY_CONTAINER="${CADDY_CONTAINER}"
@@ -1156,6 +1207,7 @@ HELPEREOF
     echo -e "  ${VERT}MinIO Console :${RESET} https://${MINIO_CONSOLE_DOMAIN}"
     echo -e "  ${VERT}Listmonk      :${RESET} https://${LISTMONK_DOMAIN}"
     echo -e "  ${VERT}Logto (auth)  :${RESET} https://${LOGTO_DOMAIN}"
+    echo -e "  ${VERT}Uptime Kuma   :${RESET} https://${UPTIME_DOMAIN}"
     [[ "$INSTALL_TTS" == "oui" ]] && echo -e "  ${VERT}Pocket TTS    :${RESET} https://${TTS_DOMAIN}"
     echo ""
     echo -e "  ${JAUNE}Post-install :${RESET}"
@@ -1165,7 +1217,8 @@ HELPEREOF
     echo -e "  4. Baserow : https://${BASEROW_DOMAIN} → créer compte"
     echo -e "  5. Listmonk : https://${LISTMONK_DOMAIN}/install"
     echo -e "  6. Logto admin : http://127.0.0.1:${PORT_LOGTO_ADMIN} (accès local uniquement)"
-    [[ "$INSTALL_TTS" == "oui" ]] && echo -e "  7. Pocket TTS : https://${TTS_DOMAIN} (premier démarrage ~2min, download modèle)"
+    echo -e "  7. Uptime Kuma : https://${UPTIME_DOMAIN} → créer compte admin"
+    [[ "$INSTALL_TTS" == "oui" ]] && echo -e "  8. Pocket TTS : https://${TTS_DOMAIN} (premier démarrage ~2min, download modèle)"
     echo ""
     echo -e "${GRAS}${VERT}  Done. Stack prête sur https://${ROOT_DOMAIN}${RESET}"
     echo ""
@@ -1222,6 +1275,7 @@ cmd_keys() {
     echo -e "  MinIO Console : ${VERT}https://${MINIO_CONSOLE_DOMAIN:-?}${RESET}"
     echo -e "  Listmonk      : ${VERT}https://${LISTMONK_DOMAIN:-?}${RESET}"
     echo -e "  Logto (auth)  : ${VERT}https://${LOGTO_DOMAIN:-?}${RESET}"
+    echo -e "  Uptime Kuma   : ${VERT}https://${UPTIME_DOMAIN:-?}${RESET}"
     [[ "${INSTALL_TTS:-non}" == "oui" ]] && \
         echo -e "  Pocket TTS    : ${VERT}https://${TTS_DOMAIN:-?}${RESET}"
     echo ""
@@ -1303,7 +1357,7 @@ cmd_backup() {
     if [[ "$DO_VOLUMES" == "true" ]]; then
         log_info "Backup volumes..."
         local DEST_N8N="$BACKUP_DIR/volume_n8n_${TIMESTAMP}.tar.gz"
-        tar -czf "$DEST_N8N" -C "$DATA_DIR" n8n/ 2>/dev/null && \
+        tar -czf "$DEST_N8N" -C "$DATA_DIR" n8n/ uptime-kuma/ 2>/dev/null && \
             log_success "  n8n → $(basename "$DEST_N8N") ($(du -sh "$DEST_N8N" | cut -f1))" || \
             { log_warn "  Backup n8n échoué"; BACKUP_OK=false; }
         local DEST_MINIO="$BACKUP_DIR/volume_minio_${TIMESTAMP}.tar.gz"
@@ -1390,7 +1444,7 @@ cmd_update() {
     fi
 
     local SPECIFIC="${2:-}"
-    local ALL_SERVICES=(postgres dragonfly redis n8n n8n-mcp baserow minio listmonk logto tts)
+    local ALL_SERVICES=(postgres dragonfly redis n8n n8n-mcp baserow minio listmonk logto uptime-kuma tts)
 
     # ARCH1 : inclure caddy si mode standalone
     if [[ -z "$SPECIFIC" && -f "$CONF" ]]; then
@@ -1486,7 +1540,7 @@ EOF
 
     for ctn in saaskit-postgres saaskit-dragonfly saaskit-redis saaskit-n8n \
                saaskit-n8n-mcp saaskit-baserow saaskit-minio saaskit-listmonk \
-               saaskit-logto saaskit-tts saaskit-caddy; do
+               saaskit-logto saaskit-uptime-kuma saaskit-tts saaskit-caddy; do
         docker ps -a --format '{{.Names}}' | grep -q "^${ctn}$" && \
             docker rm -f "$ctn" 2>/dev/null && log_info "  $ctn supprimé." || true
     done
