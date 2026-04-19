@@ -7,7 +7,7 @@
 
 ## SAASKIT is a One-script SaaS stack installer for self-hosted indie builders
 
-> n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Logto · Listmonk · Uptime Kuma · Claude Code · MCP
+> n8n · Baserow · MinIO · PostgreSQL · Dragonfly · Logto · Uptime Kuma · Claude Code · MCP
 
 
 > [!NOTE]
@@ -65,11 +65,10 @@ Because the tools you already pay for every month have a free, production-grade,
 | **Zapier** Pro ($49/mo) | Replaced by n8n self-hosted | ~$49/mo |
 | **Make** Core ($9/mo) | Replaced by n8n self-hosted | ~$9/mo |
 | **Auth0** ($23/mo, 1k MAU) | **Logto** self-hosted — unlimited users, OIDC/OAuth2 | ~$23–200/mo |
-| **Mailchimp** / **Brevo** paid | **Listmonk** self-hosted — unlimited subscribers, unlimited emails | ~$20–100/mo |
 | **Pingdom** / **UptimeRobot** paid | **Uptime Kuma** self-hosted — unlimited monitors + public status page | ~$10–50/mo |
 
 > [!IMPORTANT]
-> **At current cloud pricing, this stack replaces $100 to $550/month of SaaS costs.** Your VPS costs $5–20/month. The math is obvious.
+> **At current cloud pricing, this stack replaces $100 to $500/month of SaaS costs.** Your VPS costs $5–20/month. The math is obvious.
 
 ---
 
@@ -85,7 +84,6 @@ Because the tools you already pay for every month have a free, production-grade,
 | **[Dragonfly](https://dragonflydb.io)** | Redis-compatible cache, 25× faster than Redis — dedicated to n8n | Redis Cloud |
 | **[Redis 7](https://redis.io)** | Standard Redis cache — dedicated to Baserow | Redis Cloud |
 | **[Logto](https://logto.io)** | OIDC/OAuth2 auth — user management, social login, MFA for your SaaS | Auth0, Firebase Auth |
-| **[Listmonk](https://listmonk.app)** | Self-hosted email campaigns & transactional mail | Mailchimp, Brevo |
 | **[Uptime Kuma](https://uptime.kuma.pet)** | Uptime monitoring + public status page — know before your users do | Pingdom, UptimeRobot |
 | **[Claude Code](https://claude.ai/code)** | AI coding CLI, pre-connected to your stack via MCP | GitHub Copilot, Cursor |
 
@@ -139,12 +137,6 @@ Logto self-hosted: unlimited users, unlimited apps, full OIDC/OAuth2 compliance,
 
 > [!NOTE]
 > Logto is pre-wired to the shared PostgreSQL instance. Zero extra database to manage.
-
-### Why Listmonk over Mailchimp?
-
-Mailchimp free tier caps at 500 contacts and 1,000 sends/month. Paid plans start at $20/month and scale by contact count — a 10k-subscriber list costs $100+/month.
-
-Listmonk self-hosted: unlimited subscribers, unlimited campaigns, transactional emails, double opt-in, bounce handling — all for the cost of your VPS and your SMTP provider.
 
 ### Why Uptime Kuma over Pingdom?
 
