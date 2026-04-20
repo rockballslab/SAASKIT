@@ -761,7 +761,7 @@ _install_configure_proxy() {
 # ── saas-kit — Pocket TTS ────────────────────────────────────────────────────
 ${TTS_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_TTS} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -775,7 +775,7 @@ ${TTS_DOMAIN} {
 # ── saas-kit — n8n ───────────────────────────────────────────────────────────
 ${N8N_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_N8N} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -791,7 +791,7 @@ ${N8N_DOMAIN} {
 # ── saas-kit — n8n-MCP ───────────────────────────────────────────────────────
 ${MCP_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MCP} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -801,7 +801,7 @@ ${MCP_DOMAIN} {
 # ── saas-kit — Baserow ───────────────────────────────────────────────────────
 ${BASEROW_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_BASEROW} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -811,7 +811,7 @@ ${BASEROW_DOMAIN} {
 # ── saas-kit — MinIO API ─────────────────────────────────────────────────────
 ${MINIO_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MINIO_API} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -821,7 +821,7 @@ ${MINIO_DOMAIN} {
 # ── saas-kit — MinIO Console ─────────────────────────────────────────────────
 ${MINIO_CONSOLE_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MINIO_CONSOLE} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -831,7 +831,7 @@ ${MINIO_CONSOLE_DOMAIN} {
 # ── saas-kit — Logto (auth OIDC) ─────────────────────────────────────────────
 ${LOGTO_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_LOGTO} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
@@ -841,7 +841,7 @@ ${LOGTO_DOMAIN} {
 # ── saas-kit — Uptime Kuma (status) ──────────────────────────────────────────
 ${UPTIME_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_UPTIME} {
-    header_up Host \{host}
+    header_up Host {host}
     header_up X-Real-IP \{remote_host}
     header_up X-Forwarded-Proto \{scheme}
   }
