@@ -617,9 +617,8 @@ services:
       options: {max-size: "10m", max-file: "3"}
 
   # n8n-MCP — MCP server pour Claude (FIX B6 : N8N_API_KEY via saaskit-mcp-apikey.sh)
-  # C2 TODO : pinner ce tag dès qu'une release stable est taguée sur ghcr.io/czlonkowski/n8n-mcp
   n8n-mcp:
-    image: ghcr.io/czlonkowski/n8n-mcp:latest
+    image: ghcr.io/czlonkowski/n8n-mcp:v2.47.12
     container_name: saaskit-n8n-mcp
     restart: unless-stopped
     ports:
