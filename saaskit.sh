@@ -397,6 +397,7 @@ _install_generate_compose() {
         condition: service_healthy
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
     healthcheck:
       test: [\"CMD-SHELL\", \"wget --quiet --tries=1 --spider http://localhost:3001/api/status || exit 1\"]
       interval: 30s
@@ -451,6 +452,7 @@ _install_generate_compose() {
       - saaskit-net
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
     healthcheck:
       test: [\"CMD-SHELL\", \"wget --quiet --tries=1 --spider http://localhost:3001/ || exit 1\"]
       interval: 30s
@@ -511,6 +513,8 @@ services:
       - saaskit-net
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, SETUID, SETGID]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \${POSTGRES_USER}"]
       interval: 10s
@@ -531,6 +535,7 @@ services:
       - saaskit-net
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -p 6379 ping || exit 1"]
       interval: 10s
@@ -550,6 +555,7 @@ services:
       - saaskit-net
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -668,6 +674,8 @@ services:
         condition: service_healthy
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, SETUID, SETGID]
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:80/ || exit 1"]
       interval: 30s
@@ -697,6 +705,7 @@ services:
       - saaskit-net
     security_opt:
       - no-new-privileges:true
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || wget -qO /dev/null http://localhost:9000/minio/health/live 2>/dev/null || exit 1"]
       interval: 30s
