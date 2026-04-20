@@ -1320,14 +1320,14 @@ cmd_backup() {
     fi
 
     log_info "Upload vers MinIO interne (bucket: $MINIO_BUCKET)..."
-    docker exec saaskit-minio mc alias set local http://localhost:9000 \
-        "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" 2>/dev/null || true
-    docker exec saaskit-minio mc mb --ignore-existing "local/$MINIO_BUCKET" 2>/dev/null || true
+    # FIX S9 : MC_HOST_ remplace mc alias set — credentials invisibles dans docker events
+    local _mc_local="MC_HOST_local=http://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@localhost:9000"
+    docker exec -e "$_mc_local" saaskit-minio mc mb --ignore-existing "local/${MINIO_BUCKET}" 2>/dev/null || true
     local UPLOADED=0
     for f in "$BACKUP_DIR"/*_${TIMESTAMP}*; do
         [[ -f "$f" ]] || continue
         docker cp "$f" "saaskit-minio:/tmp/$(basename "$f")" && \
-            docker exec saaskit-minio mc cp "/tmp/$(basename "$f")" "local/$MINIO_BUCKET/$(basename "$f")" && \
+            docker exec -e "$_mc_local" saaskit-minio mc cp "/tmp/$(basename "$f")" "local/${MINIO_BUCKET}/$(basename "$f")" && \
             docker exec saaskit-minio rm -f "/tmp/$(basename "$f")" && UPLOADED=$((UPLOADED + 1))
     done
     log_success "MinIO : $UPLOADED fichier(s) uploadé(s)."
@@ -1343,18 +1343,19 @@ cmd_backup() {
 
         if [[ -n "${BACKUP_EXTERNAL_ENDPOINT:-}" ]]; then
             log_info "Upload externe vers ${BACKUP_EXTERNAL_ENDPOINT}..."
-            docker exec saaskit-minio mc alias set ext-backup \
-                "$BACKUP_EXTERNAL_ENDPOINT" \
-                "${BACKUP_EXTERNAL_ACCESS_KEY:-}" "${BACKUP_EXTERNAL_SECRET_KEY:-}" 2>/dev/null || true
+            # FIX S9 : MC_HOST_ pour backup externe — credentials dans env var
+            local _ext_host="${BACKUP_EXTERNAL_ENDPOINT#https://}"
+            _ext_host="${_ext_host#http://}"
+            local _mc_ext="MC_HOST_ext-backup=https://${BACKUP_EXTERNAL_ACCESS_KEY:-}:${BACKUP_EXTERNAL_SECRET_KEY:-}@${_ext_host}"
             for f in "$BACKUP_DIR"/*_${TIMESTAMP}*; do
                 [[ -f "$f" ]] || continue
                 local fname; fname=$(basename "$f")
                 local fsize_local; fsize_local=$(stat -c%s "$f" 2>/dev/null || echo "0")
                 if docker cp "$f" "saaskit-minio:/tmp/${fname}" 2>/dev/null; then
-                    if timeout 300 docker exec saaskit-minio mc cp \
+                    if timeout 300 docker exec -e "$_mc_ext" saaskit-minio mc cp \
                             "/tmp/${fname}" "ext-backup/${BACKUP_EXTERNAL_BUCKET}/${fname}" 2>/dev/null; then
                         local fsize_remote
-                        fsize_remote=$(docker exec saaskit-minio mc stat \
+                        fsize_remote=$(docker exec -e "$_mc_ext" saaskit-minio mc stat \
                             "ext-backup/${BACKUP_EXTERNAL_BUCKET}/${fname}" 2>/dev/null \
                             | grep -i 'size' | grep -oP '\d+' | head -1 || echo "0")
                         if [[ "${fsize_remote:-0}" -ge "$fsize_local" ]]; then
@@ -1370,7 +1371,6 @@ cmd_backup() {
                     log_warn "  Transfert container échoué : ${fname}"; BACKUP_OK=false
                 fi
             done
-            docker exec saaskit-minio mc alias rm ext-backup 2>/dev/null || true
         fi
     fi
 
