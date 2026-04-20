@@ -104,7 +104,7 @@ detect_reverse_proxy() {
     while IFS= read -r cname; do
         if docker inspect --format \
             '{{range $p, $c := .HostConfig.PortBindings}}{{$p}} {{end}}' \
-            "$cname" 2>/dev/null | grep -q "443"; then
+            "$cname" 2>/dev/null | grep -qE "(^| )443/tcp( |$)"; then
             other_caddy="$cname"; break
         fi
     done < <(docker ps --format '{{.Names}}' 2>/dev/null)
