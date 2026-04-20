@@ -1116,8 +1116,6 @@ HELPEREOF
     chmod +x /usr/local/bin/saaskit-mcp-apikey.sh
 
     if [[ -f /etc/aide/aide.conf ]] && ! grep -q "saas-kit" /etc/aide/aide.conf 2>/dev/null; then
-        echo "!/opt/saas-kit/data" >> /etc/aide/aide.conf
-        log_info "Volume saas-kit exclu de AIDE."
         {
             echo "!/opt/saas-kit/data(/.*)?$"
             echo "!/opt/saas-kit/backups(/.*)?$"
