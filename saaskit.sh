@@ -644,7 +644,7 @@ services:
       options: {max-size: "10m", max-file: "3"}
 
   baserow:
-    image: baserow/baserow:2.1.6
+    image: baserow/baserow:2.2.0
     container_name: saaskit-baserow
     restart: unless-stopped
     ports:
