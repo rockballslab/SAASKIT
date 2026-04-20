@@ -520,7 +520,7 @@ services:
       options: {max-size: "10m", max-file: "3"}
 
   dragonfly:
-    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.27.1
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.38.0
     container_name: saaskit-dragonfly
     restart: unless-stopped
     ulimits:
@@ -1036,7 +1036,7 @@ _install_post_setup() {
 
     # E3 FIX : nom de package corrigé (@anthropic-ai/ pas @anthropic/) + version pinnée
     # Vérifier la dernière version stable sur https://www.npmjs.com/package/@anthropic-ai/claude-code
-    local CLAUDE_CODE_VERSION="2.1.87"
+    local CLAUDE_CODE_VERSION="2.1.114"
     npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" --quiet 2>/dev/null && \
         log_success "Claude Code ${CLAUDE_CODE_VERSION} installé." || \
         log_warn "Échec — installe manuellement : npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
