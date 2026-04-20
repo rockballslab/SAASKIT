@@ -686,9 +686,9 @@ services:
       options: {max-size: "10m", max-file: "3"}
 
   # MinIO — FIX S6 : CVE-2025-62506 patchée, FIX B4 : healthcheck HTTP
-  # E1 FIX : minio/minio archivé sur Docker Hub depuis cette release CVE — migré sur alpine/minio
+  # E1 FIX : alpine/minio non officiel (maintenu par un particulier) — migré sur quay.io/minio/minio
   minio:
-    image: alpine/minio:RELEASE.2025-10-15T17-29-55Z
+      image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z.hotfix.7aa24e772
     container_name: saaskit-minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
