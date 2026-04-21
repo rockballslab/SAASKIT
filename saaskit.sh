@@ -762,8 +762,8 @@ _install_configure_proxy() {
 ${TTS_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_TTS} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security \"max-age=31536000\"; -Server }
 }"
@@ -776,8 +776,8 @@ ${TTS_DOMAIN} {
 ${N8N_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_N8N} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header {
     Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -792,8 +792,8 @@ ${N8N_DOMAIN} {
 ${MCP_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MCP} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security "max-age=31536000"; X-Content-Type-Options "nosniff"; -Server }
 }
@@ -802,8 +802,8 @@ ${MCP_DOMAIN} {
 ${BASEROW_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_BASEROW} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
@@ -812,8 +812,8 @@ ${BASEROW_DOMAIN} {
 ${MINIO_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MINIO_API} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { -Server }
 }
@@ -822,8 +822,8 @@ ${MINIO_DOMAIN} {
 ${MINIO_CONSOLE_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_MINIO_CONSOLE} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
@@ -832,8 +832,8 @@ ${MINIO_CONSOLE_DOMAIN} {
 ${LOGTO_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_LOGTO} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
@@ -842,8 +842,8 @@ ${LOGTO_DOMAIN} {
 ${UPTIME_DOMAIN} {
   reverse_proxy 127.0.0.1:${PORT_UPTIME} {
     header_up Host {host}
-    header_up X-Real-IP \{remote_host}
-    header_up X-Forwarded-Proto \{scheme}
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-Proto {scheme}
   }
   header { Strict-Transport-Security "max-age=31536000"; X-Frame-Options "SAMEORIGIN"; -Server }
 }
